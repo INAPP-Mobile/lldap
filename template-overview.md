@@ -1,4 +1,4 @@
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/lldap?utm_campaign=lldap)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/lldap-1?utm_campaign=lldap)
 
 ![LLDAP users list](https://raw.githubusercontent.com/INAPP-Mobile/lldap/main/assets/lldap-screenshot.png)
 

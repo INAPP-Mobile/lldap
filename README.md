@@ -2,7 +2,7 @@
 
 LLDAP is a lightweight LDAP server for user management, with a web UI: create users and groups, set passwords, and give your self-hosted apps (Nextcloud, Gitea, Jellyfin, Authelia, and anything else that speaks LDAP) a single source of truth for authentication. It is a single tiny Rust service with an embedded SQLite database — no companion database, ~2 MB of RAM at rest — built for anyone who wants LDAP without running OpenLDAP or FreeIPA.
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/lldap?utm_campaign=lldap)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/lldap-1?utm_campaign=lldap)
 
 ![LLDAP users list](assets/lldap-screenshot.png)
 
