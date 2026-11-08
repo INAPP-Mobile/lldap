@@ -31,5 +31,18 @@ if [ "$LLDAP_HTTP_PORT" != "$PORT_VALUE" ]; then
   exit 1
 fi
 
+# HTTP_URL: derive at boot from the live RAILWAY_PUBLIC_DOMAIN.
+# A template-expression default (https://${{RAILWAY_PUBLIC_DOMAIN}})
+# resolves to a bare "https://" on first deploy (no domain exists
+# yet) and LLDAP rejects it hard ("empty host") — crash loop, found
+# in e2e 2026-11-08 (same shape as the 2026-10-29 Spliit BASE_URL
+# lesson). Only set it when a real domain is present; otherwise
+# leave it unset and LLDAP defaults to http://localhost. It is
+# only used for password-reset email links (SMTP off by default),
+# so an unset value is harmless.
+if [ -n "${RAILWAY_PUBLIC_DOMAIN:-}" ]; then
+  export LLDAP_HTTP_URL="https://${RAILWAY_PUBLIC_DOMAIN}"
+fi
+
 echo "LLDAP: HTTP on :${PORT_VALUE}, LDAP on :${LLDAP_LDAP_PORT:-3890}, data in /data"
 exec tini -- /docker-entrypoint.sh run --config-file /data/lldap_config.toml

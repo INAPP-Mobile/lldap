@@ -34,7 +34,15 @@
 #   Other Railway services in the same project can reach LDAP over
 #   the private network (service hostname, port 3890) for SSO with
 #   apps that support LDAP. LDAPS is off by default.
-# - SECRETS: LLDAP_JWT_SECRET and LLDAP_KEY_SEED must be random per
+# - HTTP_URL: derived at boot from the live RAILWAY_PUBLIC_DOMAIN
+#   by entrypoint.sh — never a template-expression variable. A
+#   https://${{RAILWAY_PUBLIC_DOMAIN}} default resolves to a bare
+#   "https://" on first deploy (no domain exists yet) and LLDAP
+#   rejects it hard ("empty host"), crash-looping the container
+#   (found in e2e 2026-11-08; same shape as the 2026-10-29 Spliit
+#   BASE_URL lesson). Unset is safe: LLDAP defaults to
+#   http://localhost, and the URL is only used for password-reset
+#   links (SMTP off by default).
 #   deploy (the image ships a constant placeholder key_seed) — they
 #   are generated deploy-form variables, never baked.
 # - No Docker HEALTHCHECK: rely on Railway's external

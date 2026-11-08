@@ -10,7 +10,7 @@ LLDAP is a lightweight LDAP server for user management, with a web UI: create us
 
 ## About Hosting
 
-Hosting LLDAP on Railway keeps your user directory on your own volume instead of a SaaS. The deployment is a single always-on Rust service: the wrapper maps Railway's injected `PORT` onto LLDAP's HTTP port on every boot (upstream ignores generic `PORT`), the upstream entrypoint seeds the admin account from the generated deploy-form password, and the SQLite database lives on the volume. The deploy form has four generated fields and nothing to type.
+Hosting LLDAP on Railway keeps your user directory on your own volume instead of a SaaS. The deployment is a single always-on Rust service: the wrapper maps Railway's injected `PORT` onto LLDAP's HTTP port on every boot (upstream ignores generic `PORT`), the upstream entrypoint seeds the admin account from the generated deploy-form password, and the SQLite database lives on the volume. The deploy form has three generated fields and nothing to type.
 
 ## Why Deploy
 
@@ -39,7 +39,7 @@ Hosting LLDAP on Railway keeps your user directory on your own volume instead of
 | `LLDAP_LDAP_USER_PASS` | `${{secret(32)}}` | Admin password (user `admin`), seeded once on first boot. |
 | `LLDAP_JWT_SECRET` | `${{secret(32)}}` | Random secret for JWT signatures. |
 | `LLDAP_KEY_SEED` | `${{secret(32)}}` | Random seed for the server private key protecting stored passwords. |
-| `LLDAP_HTTP_URL` | `https://${{RAILWAY_PUBLIC_DOMAIN}}` | Public URL, used in password-reset email links. |
+| `LLDAP_HTTP_URL` | derived at boot | Public URL, used in password-reset email links. Derived from the live Railway domain by the wrapper entrypoint; never set it to `https://${{RAILWAY_PUBLIC_DOMAIN}}` as a variable — it resolves to a bare `https://` on first deploy and LLDAP rejects it hard ("empty host"). |
 | `PORT` | Railway-injected | HTTP port, exported as `LLDAP_HTTP_PORT` by the wrapper on every boot. |
 | `LLDAP_LDAP_BASE_DN` | `dc=example,dc=com` | Base DN for the directory (baked). |
 | `LLDAP_LDAP_PORT` | `3890` | LDAP port (baked). Internal only — Railway's public edge is HTTP-only, so LDAP is reachable from other services in the same project over the private network, not from the internet. |

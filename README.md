@@ -36,14 +36,14 @@ After deploy, log in as `admin`, create a user (user ID, email, display name, pa
 
 ## Configuration
 
-The one-click deploy form has four generated fields — no typing required. Everything else is baked into the image; applicable upstream variables and their baked values:
+The one-click deploy form has three generated fields — no typing required. The public URL (`LLDAP_HTTP_URL`, used only for password-reset email links) is derived at boot from the live Railway domain by the wrapper entrypoint — it is deliberately not a deploy-form variable, because a `https://${{RAILWAY_PUBLIC_DOMAIN}}` default resolves to a bare `https://` on first deploy and LLDAP rejects it hard ("empty host"), crash-looping the container (found in e2e). Everything else is baked into the image; applicable upstream variables and their baked values:
 
 | Variable | Value | Description |
 | --- | --- | --- |
 | `LLDAP_LDAP_USER_PASS` | `${{secret(32)}}` | Admin password for the web UI and LDAP bind (user `admin`). Seeded once on first boot; changing it later does not reset the password. |
 | `LLDAP_JWT_SECRET` | `${{secret(32)}}` | Random secret for JWT signatures. Changing it invalidates all user sessions. |
 | `LLDAP_KEY_SEED` | `${{secret(32)}}` | Random seed for the server private key that protects stored passwords. Keep it stable. |
-| `LLDAP_HTTP_URL` | `https://${{RAILWAY_PUBLIC_DOMAIN}}` | Public URL of the server, used in password-reset email links. |
+| `LLDAP_HTTP_URL` | derived at boot | Public URL, used in password-reset email links. Derived from the live Railway domain by the wrapper entrypoint; never set it to `https://${{RAILWAY_PUBLIC_DOMAIN}}` as a variable — it resolves to a bare `https://` on first deploy and LLDAP rejects it hard ("empty host"). |
 | `PORT` | Railway-injected | The HTTP port: the wrapper exports it as `LLDAP_HTTP_PORT` on every boot (upstream default 17170, and upstream ignores generic `PORT`). |
 | `LLDAP_LDAP_BASE_DN` | `dc=example,dc=com` | Base DN for the directory (baked; change the service variable before first boot if you want your own domain, e.g. `dc=mycompany,dc=com`). |
 | `LLDAP_LDAP_USER_EMAIL` | `admin@example.com` | Admin email, used only when initially creating the admin user (baked). |
